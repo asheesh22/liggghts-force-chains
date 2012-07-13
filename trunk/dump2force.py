@@ -71,7 +71,7 @@ timestep = forcedata.next()
 #
 # NOTE: the first timesteps are often blank, and then natoms returns 0, so this doesn't really work...
 #
-if forcedata.snaps[fileindex].natoms !=0 and len(forcedata.snaps[0].atoms[0]) < 11:
+if forcedata.snaps[fileindex].natoms !=0 and len(forcedata.snaps[0].atoms[0]) < 12:
     print "Error - dump file requires at least all parameters from a compute pair/gran/local id pos force (12 in total)"
     sys.exit()
 
@@ -84,8 +84,8 @@ while timestep >= 0:
     # if contactArea is enabled, that's one more (13) and heatflux (14)
     #
     # assign names to atom columns (1-N)
-    # forcedata.map(1,"x1",2,"y1",3,"z1",4,"x2",5,"y2",6,"z2",7,"id1",8,"id2",9,"periodic",10,"fx",11,"fy",12,"fz")
-    forcedata.map(1,"x1",2,"y1",3,"z1",4,"x2",5,"y2",6,"z2",7,"id1",8,"id2",9,"periodic",10,"fx",11,"fy",12,"fz",13,"area",14,"heatflux")
+    forcedata.map(1,"x1",2,"y1",3,"z1",4,"x2",5,"y2",6,"z2",7,"id1",8,"id2",9,"periodic",10,"fx",11,"fy",12,"fz")
+    # forcedata.map(1,"x1",2,"y1",3,"z1",4,"x2",5,"y2",6,"z2",7,"id1",8,"id2",9,"periodic",10,"fx",11,"fy",12,"fz",13,"area",14,"heatflux")
 
     # check for contact data (some timesteps may have no particles in contact)
     #
@@ -204,8 +204,8 @@ while timestep >= 0:
                          np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["fz"]],dtype=np.float64)**2 )
 
         # And, optionally, contact area and heat flux (using the same connectivity)
-        area = np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["area"]],dtype=np.float64)
-        heatflux = np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["heatflux"]],dtype=np.float64)
+        # area = np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["area"]],dtype=np.float64)
+        # heatflux = np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["heatflux"]],dtype=np.float64)
 
         # Now we have enough data to create the file:
         # Points - (x,y,z) (npoints)
@@ -242,8 +242,8 @@ while timestep >= 0:
         # Set up force data
         w.openData("Cell")
         w.addData("force", force)
-        w.addData("area", area)
-        w.addData("heatflux", heatflux)
+        # w.addData("area", area)
+        # w.addData("heatflux", heatflux)
         w.closeData("Cell")
 
         # and contact area
@@ -263,7 +263,8 @@ while timestep >= 0:
         # Append binary data
         w.appendData( (x,y,z) )
         w.appendData(connections).appendData(offset).appendData(celltype)
-        w.appendData(force).appendData(area).appendData(heatflux)
+        # w.appendData(force).appendData(area).appendData(heatflux)
+        w.appendData(force)
         w.save()
 
     # Add this file to the group of all timesteps
